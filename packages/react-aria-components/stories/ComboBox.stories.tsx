@@ -183,3 +183,46 @@ export const ComboBoxAsyncLoadingExample = () => {
     </ComboBox>
   );
 };
+
+export const ComboBoxAsyncLoadingExampleNoResultsEmptyString = () => {
+  let list = useAsyncList<ComboBoxItem>({
+    async load({filterText}) {
+      let json = await new Promise(resolve => {
+        setTimeout(() => {
+          resolve(!filterText ? [] : items.filter(item => {
+            let name = item.name.toLowerCase();
+            for (let filterChar of filterText.toLowerCase()) {
+              if (!name.includes(filterChar)) {
+                return false;
+              }
+              name = name.replace(filterChar, '');
+            }
+            return true;
+          }));
+        }, 500);
+      }) as ComboBoxItem[];
+
+      return {
+        items: json
+      };
+    }
+  });
+
+  return (
+    <ComboBox items={list.items} inputValue={list.filterText} onInputChange={list.setFilterText}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <div style={{display: 'flex'}}>
+        <Input />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+        </Button>
+      </div>
+      <Popover placement="bottom end">
+        <ListBox<ComboBoxItem>
+          className={styles.menu}>
+          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  );
+};

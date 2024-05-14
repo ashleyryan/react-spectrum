@@ -192,7 +192,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       isFocused &&
       (filteredCollection.size > 0 || allowsEmptyCollection) &&
       !triggerState.isOpen &&
-      inputValue !== lastValue &&
+      (inputValue !== lastValue || (lastCollection.size === 0 && filteredCollection.size > 0)) &&
       menuTrigger !== 'manual'
     ) {
       open(null, 'input');
